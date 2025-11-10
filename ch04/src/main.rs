@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 fn main() {
     println!("Hello, world!");
@@ -40,6 +40,43 @@ fn tribonacci_memo(n: usize) -> u64 {
     _go(n, &mut memo)
 }
 
+fn find_under_753(k: u64) -> usize {
+    let d = digits(k);
+    let mut count = 0;
+    for i in 0..d {
+        for n in generate(d - i) {
+            if n <= k && is_753_number(n) {
+                count += 1;
+            }
+        }
+    }
+    count
+}
+
+fn generate(d: u32) -> Vec<u64> {
+    if d == 1 {
+        return vec![7, 5, 3];
+    }
+    let base = 10u64.pow((d - 1) as u32);
+    let mut result = Vec::new();
+    for &n in &[7 * base, 5 * base, 3 * base] {
+        for m in generate(d - 1) {
+            result.push(n + m);
+        }
+    }
+    result
+}
+
+fn is_753_number(n: u64) -> bool {
+    let uniq: HashSet<char> = n.to_string().chars().collect();
+    uniq.len() == 3
+}
+
+#[inline]
+fn digits(n: u64) -> u32 {
+    if n == 0 { 1 } else { n.ilog10() + 1 }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -65,5 +102,11 @@ mod tests {
         assert_eq!(tribonacci_memo(5), 4);
         assert_eq!(tribonacci_memo(6), 7);
         assert_eq!(tribonacci_memo(7), 13);
+    }
+
+    #[test]
+    fn test_find_under_753() {
+        assert_eq!(find_under_753(400), 2);
+        assert_eq!(find_under_753(575), 4);
     }
 }
