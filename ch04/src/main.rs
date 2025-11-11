@@ -77,6 +77,54 @@ fn digits(n: u64) -> u32 {
     if n == 0 { 1 } else { n.ilog10() + 1 }
 }
 
+// 部分和問題を再帰関数を使って全捜索する
+// vsのなかから最初のi個を使ってwが作れるかどうか
+fn naive_partial_sum(i: usize, w: usize, vs: &[usize]) -> bool {
+    if w == 0 {
+        return true;
+    }
+    if i == 0 {
+        return false;
+    }
+
+    // vs[i-1]を使わない場合
+    if naive_partial_sum(i - 1, w, vs) {
+        return true;
+    }
+
+    // vs[i-1]を使う場合
+    if w >= vs[i - 1] {
+        if naive_partial_sum(i - 1, w.saturating_sub(vs[i - 1]), vs) {
+            return true;
+        }
+    }
+    false
+}
+
+fn partial_sum_memo(i: usize, w: usize, vs: &[usize]) -> bool {
+    let mut memo: HashMap<(usize, usize), bool> = HashMap::new();
+
+    fn _go(i: usize, w: usize, vs: &[usize], memo: &mut HashMap<(usize, usize), bool>) -> bool {
+        match memo.get(&(i, w)) {
+            Some(&value) => value,
+            None => {
+                if w == 0 {
+                    return true;
+                }
+                if i == 0 {
+                    return false;
+                }
+                let a = vs[i - 1];
+                let ans = _go(i - 1, w, vs, memo) || (w >= a && _go(i - 1, w - a, vs, memo));
+                memo.insert((i, w), ans);
+                ans
+            }
+        }
+    }
+
+    _go(i, w, vs, &mut memo)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -108,5 +156,19 @@ mod tests {
     fn test_find_under_753() {
         assert_eq!(find_under_753(400), 2);
         assert_eq!(find_under_753(575), 4);
+    }
+
+    #[test]
+    fn test_naive_partial_sum() {
+        let vs = vec![3, 34, 4, 12, 5, 2];
+        assert_eq!(naive_partial_sum(vs.len(), 9, &vs), true);
+        assert_eq!(naive_partial_sum(vs.len(), 1, &vs), false);
+    }
+
+    #[test]
+    fn test_partial_sum_memo() {
+        let vs = vec![3, 34, 4, 12, 5, 2];
+        assert_eq!(partial_sum_memo(vs.len(), 9, &vs), true);
+        assert_eq!(partial_sum_memo(vs.len(), 1, &vs), false);
     }
 }
