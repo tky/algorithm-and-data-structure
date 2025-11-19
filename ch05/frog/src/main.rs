@@ -33,6 +33,27 @@ fn calculate_total_steps(steps: &Vec<i32>) -> i32 {
     dp[len - 1]
 }
 
+fn calculate_total_steps2(steps: &Vec<i32>) -> i32 {
+    let len = steps.len();
+    if len == 0 || len == 1 {
+        return 0;
+    }
+
+    let mut dp = vec![i32::MAX; len];
+    dp[0] = 0;
+    for i in 0..len {
+        if i + 1 < len {
+            let cost = dp[i] + (steps[i] - steps[i + 1]).abs();
+            chmin(&mut dp[i + 1], cost);
+        }
+        if i + 2 < len {
+            let cost = dp[i] + (steps[i] - steps[i + 2]).abs();
+            chmin(&mut dp[i + 2], cost);
+        }
+    }
+    dp[len - 1]
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -40,5 +61,6 @@ mod tests {
     fn test_calculate_total_steps() {
         let steps1 = vec![2, 9, 4, 5, 1, 6, 10];
         assert_eq!(calculate_total_steps(&steps1), 8);
+        assert_eq!(calculate_total_steps2(&steps1), 8);
     }
 }
