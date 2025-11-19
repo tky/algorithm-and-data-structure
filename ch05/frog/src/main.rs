@@ -4,9 +4,9 @@ fn main() {
     println!("Total steps: {}", total_steps);
 }
 
-fn chmin<T: PartialOrd + Copy>(vs: &mut Vec<T>, i: usize, x: T) {
-    if vs[i] > x {
-        vs[i] = x;
+fn chmin<T: PartialOrd + Copy>(a: &mut T, b: T) {
+    if *a > b {
+        *a = b;
     }
 }
 
@@ -25,10 +25,10 @@ fn calculate_total_steps(steps: &Vec<i32>) -> i32 {
     for i in 2..len {
         // 飛び飛ばして進む合
         let v1 = dp[i - 2] + (steps[i] - steps[i - 2]).abs();
-        chmin(&mut dp, i, v1);
+        chmin(&mut dp[i], v1);
 
         let v2 = dp[i - 1] + (steps[i] - steps[i - 1]).abs();
-        chmin(&mut dp, i, v2);
+        chmin(&mut dp[i], v2);
     }
     dp[len - 1]
 }
