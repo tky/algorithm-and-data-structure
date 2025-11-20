@@ -54,6 +54,19 @@ fn calculate_total_steps2(steps: &Vec<i32>) -> i32 {
     dp[len - 1]
 }
 
+fn calculate_total_step3(steps: &Vec<i32>, i: usize) -> i32 {
+    if i == 0 {
+        return 0;
+    }
+    if i == 1 {
+        return (steps[1] - steps[0]).abs();
+    }
+
+    let cost1 = calculate_total_step3(steps, i - 1) + (steps[i] - steps[i - 1]).abs();
+    let cost2 = calculate_total_step3(steps, i - 2) + (steps[i] - steps[i - 2]).abs();
+    return cost1.min(cost2);
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -62,5 +75,6 @@ mod tests {
         let steps1 = vec![2, 9, 4, 5, 1, 6, 10];
         assert_eq!(calculate_total_steps(&steps1), 8);
         assert_eq!(calculate_total_steps2(&steps1), 8);
+        assert_eq!(calculate_total_step3(&steps1, steps1.len() - 1), 8);
     }
 }
