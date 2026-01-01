@@ -8,6 +8,37 @@ fn chmax<T: PartialOrd + Copy>(a: &mut T, b: T) {
     }
 }
 
+/*
+dp[i][j] := Sのi文字目、Tのj文字目までを使った部分文字列の最長のながさ
+
+// 初期化
+dp[i][j] = 0
+
+for i = 1..|S|
+  for j = 1..|T|
+    // S[i], T[j]を使う場合
+    if S[i] == T[j]:
+      dp[i][j] = chmax(dp[i-1][j-1] + 1)
+
+    // S[i]を使わない場合
+    // S[1..i-1]とT[1..j]の問題となりdp[i-1][j]が答えとなる
+    dp[i][j] = chmax(dp[i-1][j])
+
+    // T[j]を使わない場合
+    // S[1..i]とT[1..j-1]の問題となりdp[i][j-1]が答えとなる
+    dp[i][j] = chmax(d[i][j-1])
+
+    // dp[i-1][j-1]がmaxになることはない
+    // dp[i-1][j] は dp[i-1][j-1] の T 側の文字を増やした問題
+    // → 選択肢が増えるので最適値は下がらない
+    // → dp[i-1][j] >= dp[i-1][j-1]
+    //
+    // dp[i][j-1] も同様に
+    // → dp[i][j-1] >= dp[i-1][j-1]
+    // よって max(dp[i-1][j], dp[i][j-1]) を取る時点で、dp[i-1][j-1] が最大になることはありえない
+    // dp[i][j] = chmax(dp[i-1][j-1]) <- 不要
+
+ */
 fn lcs_length(s: &str, t: &str) -> String {
     let ss = s.chars().collect::<Vec<char>>();
     let ts = t.chars().collect::<Vec<char>>();
