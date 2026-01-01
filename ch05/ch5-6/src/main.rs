@@ -2,6 +2,38 @@ fn main() {
     println!("Hello, world!");
 }
 
+/*
+a := a_i
+m := m_i
+dp[0] = 0
+dp[1..W] = -1
+
+for s = 0..W:
+  // iを使わなくてもすでにsを作れるのでsは制限回数まで使って良い
+  if dp[s] >= 0:
+      dp[s] = m
+  // dp[s] < 0なのでi-1まででsを作ることはできていない
+  // iを使ってsを作ることができるか？
+  // d[s - a]であればiをつかってsを作ることができる
+
+  // s < a => 今回のaを足してもsに届かないので作ることができない
+  else if s < a
+      dp[s] = -1
+
+  // s - aは到達不能（作れない)のでaを足しても作れない
+  else if dp[s-a] < 0
+      dp[s] = -1
+
+  // s - aは到達可能だが、aを使える回数が0なので作れない
+  else if dp[s - a] = 0
+      dp[s] = -1
+
+  // このelseは
+  // dp[s-a] > 0
+  // つまり s - aに到達可能で、aの使用回数も残っている
+  else:
+      dp[s] = dp[s - a] - 1
+ */
 fn resolve(vs: &[usize], ms: &[usize], w: usize) -> bool {
     // dp[i] := iが作れるかどうか
     let mut dp = vec![-1isize; w + 1];
