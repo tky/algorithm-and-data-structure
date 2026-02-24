@@ -13,6 +13,9 @@ fn resolve(n: usize, _m: usize, queries: Vec<Query>) -> bool {
             // すでに同一成分
             if uf.weight(r - 1) - uf.weight(l - 1) != d {
                 // 同一成分で根からの距離が矛盾している場合はfalseを返す
+                // 同一成分なのでweightの差分が計算できる
+                // weightとは対象の要素が属しているグループの根からの距離
+                // もしグループ違う場合、weightの差分は意味をなさない
                 return false;
             }
         } else {

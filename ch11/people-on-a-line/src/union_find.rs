@@ -42,15 +42,16 @@ impl UnionFind {
         let mut x = self.find(a);
         let mut y = self.find(b);
 
-        let wa = self.weight(a); // x_a - x_x
-        let wb = self.weight(b); // x_b - x_y
+        let wa = self.weight(a); // pos[a] - pos[x]
+        let wb = self.weight(b); // pos[b] - pos[y]
 
         if x == y {
             return false;
         }
 
         // y を x の子にする場合に必要な根差分:
-        // diff_weight[y] = x_y - x_x = w + wa - wb
+        // pos[b] - pos[a] = wを満たしたい
+        // pos[b] - pos[y] + pos[y] - pos[x] + pos[x] - pos[a] = w
         let mut t = w + wa - wb;
 
         // union by size: x を大きい方にする
