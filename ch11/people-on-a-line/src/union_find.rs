@@ -63,6 +63,7 @@ impl UnionFind {
 
         self.parent_or_size[x] += self.parent_or_size[y]; // sizes are negative
         self.parent_or_size[y] = x as isize;
+        // ここで保存している値は親(=x)からの距離(根からの距離ではない）
         self.diff_weight[y] = t;
         true
     }
