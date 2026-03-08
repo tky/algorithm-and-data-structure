@@ -19,29 +19,32 @@ fn topological_sort(edges: &Edges, n: usize) -> Vec<usize> {
     // 入次数を数える
     let mut indegrees = vec![0; n];
 
-    let mut results = Vec::new();
-
-    for &(_from, to) in edges.iter() {
+    for &(_, to) in edges.iter() {
         indegrees[to] += 1;
     }
 
-    while results.len() < n {
-        // DAGの性質上、必ず入次数が0の頂点が存在する
-        let mut v = 0;
-        for i in 0..n {
-            if indegrees[i] == 0 && !results.contains(&i) {
-                v = i;
-                break;
-            }
+    let mut queue = std::collections::VecDeque::new();
+    for v in 0..n {
+        if indegrees[v] == 0 {
+            queue.push_back(v);
         }
+    }
+
+    let mut results = Vec::new();
+
+    while let Some(v) = queue.pop_front() {
         results.push(v);
-        // vから出る辺を削除する
+
         for &(from, to) in edges.iter() {
             if from == v {
                 indegrees[to] -= 1;
+                if indegrees[to] == 0 {
+                    queue.push_back(to);
+                }
             }
         }
     }
+
     results
 }
 
