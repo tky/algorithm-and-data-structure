@@ -1,8 +1,12 @@
+use std::usize;
+
 #[derive(Clone, Debug)]
+// 現在の残余グラフを直接表しているデータ構造
+// 残余グラフを別に持つのではなく、逆辺を使って元のグラフを更新していく
 struct Edge {
     to: usize,
     cap: usize,
-    rev: usize,
+    rev: usize, // 逆辺のインデックス
 }
 
 type Graph = Vec<Vec<Edge>>;
@@ -35,6 +39,9 @@ fn build_graph(n: usize, edges: &Edges) -> Graph {
     g
 }
 
+// v: current vertex
+// t: target vertex
+// f: current flow (the minimum capacity along the path so far)
 fn dfs(v: usize, t: usize, f: usize, used: &mut [bool], g: &mut Graph) -> usize {
     if v == t {
         return f;
@@ -43,43 +50,38 @@ fn dfs(v: usize, t: usize, f: usize, used: &mut [bool], g: &mut Graph) -> usize 
     used[v] = true;
 
     for i in 0..g[v].len() {
-        let to = g[v][i].to;
         let cap = g[v][i].cap;
+        let to = g[v][i].to;
 
-        if used[to] || cap == 0 {
+        if cap == 0 || used[to] {
             continue;
         }
 
         let d = dfs(to, t, f.min(cap), used, g);
+
         if d > 0 {
             let rev = g[v][i].rev;
-
             // 正辺の容量を減らす
             g[v][i].cap -= d;
             // 逆辺の容量を増やす
             g[to][rev].cap += d;
-
             return d;
         }
     }
-
     0
 }
 
 // s から t への最大流
 fn ford_fulkerson(g: &mut Graph, s: usize, t: usize) -> usize {
-    let n = g.len();
     let mut flow = 0;
 
     loop {
-        let mut used = vec![false; n];
-        let f = dfs(s, t, usize::MAX, &mut used, g);
-
-        if f == 0 {
+        let mut used = vec![false; g.len()];
+        let d = dfs(s, t, usize::MAX, &mut used, g);
+        if d == 0 {
             break;
         }
-
-        flow += f;
+        flow += d;
     }
 
     flow
